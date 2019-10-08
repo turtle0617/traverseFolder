@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <link rel="stylesheet" href="style.css" />
+    <title>traverse Folder</title>
+  </head>
+  <body>
+    <div class="folder container">
+      <div class="title">
+        <h3>folder upload</h3>
+        <input type="file" id="folderpicker" webkitdirectory multiple />
+      </div>
+      <div id="folderDrop" class="dropArea">
+        <span>dropArea</span>
+      </div>
+    </div>
+    <div class="file container">
+      <div class="title">
+        <h3>file upload</h3>
+        <input
+          type="file"
+          id="filepicker"
+          name="files0[]"
+          id="files0"
+          multiple
+        />
+      </div>
+      <div id="fileDrop" class="dropArea">
+        <span>dropArea</span>
+      </div>
+    </div>
+    <ul id="listing"></ul>
+    <script>
+      const folderpicker = document.getElementById("folderpicker");
+      const folderDrop = document.getElementById("folderDrop");
+      const filepicker = document.getElementById("filepicker");
+      const fileDrop = document.getElementById("fileDrop");
+
+      folderpicker.addEventListener(
+        "change",
+        function(event) {
+          let output = document.getElementById("listing");
+          let files = event.target.files;
+          console.log("folder", files);
+          for (let i = 0; i < files.length; i++) {
+            let item = document.createElement("li");
+            item.innerHTML = files[i].webkitRelativePath;
+            output.appendChild(item);
+          }
+        },
+        false
+      );
+
+      filepicker.addEventListener(
+        "change",
+        function(event) {
+          let files = event.target.files;
+          console.log("file", files);
+        },
+        false
+      );
+
+      fileDrop.addEventListener("drop", dropHandler);
+      fileDrop.addEventListener("dragover", dragOverHandler);
+
+      function dropHandler(event) {
+        event.preventDefault();
+        const items = event.dataTransfer.items;
+        const files = event.dataTransfer.files;
+        console.log('items :', items);
+        console.log('files :', files);
+        if (event.dataTransfer.items) {
+          // Use DataTransferItemList interface to access the file(s)
+          [...event.dataTransfer.items].forEach((item, index) => {
+            if (event.dataTransfer.items[index].kind === "file") {
+              const entry = item.webkitGetAsEntry();
+              const file = event.dataTransfer.items[index].getAsFile();
+              console.log('entry :', entry);
+              console.log("... file[" + index + "] = ",file);
+            }
+          });
+        } else {
+          // Use DataTransfer interface to access the file(s)
+          [...event.dataTransfer.items].forEach((item, index) => {
+            console.log(
+              "... file[" + index + "] = ",ev.dataTransfer.files[index]
+            );
+          });
+        }
+      }
+
+      function dragOverHandler(event) {
+        console.log("File(s) in drop zone");
+        event.preventDefault();
+      }
+    </script>
+  </body>
+</html>
