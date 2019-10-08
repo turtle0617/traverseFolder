@@ -1,12 +1,18 @@
-.title {
-  display: flex;
-  width: 100vw;
-  align-items: flex-end;
-}
-.title h3 {
-  margin-bottom: 0;
+.textTitle {
+  display: inline-block;
+  min-width: 200px;
   margin-right: 1rem;
+  font-size: 1.5rem;
+  font-weight: 700;
 }
+
+.type__text {
+  font-size: 1.3rem;
+  font-weight: 500;
+  font-family: monospace;
+  letter-spacing: 5px;
+}
+
 .dropArea {
   display: flex;
   justify-content: center;

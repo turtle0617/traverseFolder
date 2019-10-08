@@ -9,12 +9,12 @@
   </head>
   <body>
     <div class="inputUpload container">
-      <div class="title folder">
-        <h3>folder upload</h3>
+      <div class=" folder">
+        <span class="textTitle">folder upload</span>
         <input type="file" id="folderpicker" webkitdirectory multiple />
       </div>
-      <div class="title file">
-        <h3>file upload</h3>
+      <div class=" file">
+        <span class="textTitle">file upload</span>
         <input
           type="file"
           id="filepicker"
@@ -24,6 +24,10 @@
         />
       </div>
     </div>
+    <div class="type">
+      <span class="textTitle">Type :</span>
+      <span class="type__text"></span>
+    </div>
     <div id="dropArea" class="dropArea">
       <span>dropArea</span>
     </div>
@@ -32,12 +36,13 @@
       const folderpicker = document.getElementById("folderpicker");
       const filepicker = document.getElementById("filepicker");
       const dropArea = document.getElementById("dropArea");
-
+      const typeText = document.getElementsByClassName("type__text")[0];
       folderpicker.addEventListener(
         "change",
         function(event) {
           let output = document.getElementById("listing");
           let files = event.target.files;
+          showDropType("Folder");
           console.log("folder", files);
           for (let i = 0; i < files.length; i++) {
             let item = document.createElement("li");
@@ -52,6 +57,7 @@
         "change",
         function(event) {
           let files = event.target.files;
+          showDropType("File");
           console.log("file", files);
         },
         false
@@ -72,6 +78,7 @@
             if (event.dataTransfer.items[index].kind === "file") {
               const entry = item.webkitGetAsEntry();
               const file = event.dataTransfer.items[index].getAsFile();
+              showDropType(entry);
               console.log("entry :", entry);
               console.log("... file[" + index + "] = ", file);
             }
@@ -90,6 +97,11 @@
       function dragOverHandler(event) {
         console.log("File(s) in drop zone");
         event.preventDefault();
+      }
+
+      function showDropType(file) {
+        if (typeof file === "string") typeText.innerText = file;
+        else typeText.innerText = file.isDirectory ? "Folder" : "File";
       }
     </script>
   </body>
