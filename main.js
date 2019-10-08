@@ -27,36 +27,61 @@ filepicker.addEventListener(
 dropArea.addEventListener("drop", dropHandler);
 dropArea.addEventListener("dragover", dragOverHandler);
 
-function dropHandler(event) {
+async function dropHandler(event) {
   event.preventDefault();
   const items = event.dataTransfer.items;
-  const files = event.dataTransfer.files;
-  console.log("items :", items);
-  console.log("files :", files);
-  if (items) {
-    // Use DataTransferItemList interface to access the file(s)
-    [...items].forEach((item, index) => {
-      if (items[index].kind === "file") {
-        const entry = item.webkitGetAsEntry();
-        const file = items[index].getAsFile();
-        showDropType(entry);
-        console.log("... file[" + index + "] = ", file);
-      }
-    });
-  } else {
-    // Use DataTransfer interface to access the file(s)
-    [...event.dataTransfer.items].forEach((item, index) => {
-      console.log(
-        "... file[" + index + "] = ",
-        event.dataTransfer.files[index]
-      );
-    });
-  }
+  // Use DataTransferItemList interface to access the file(s)
+  const queue = [...items].map((item, index) => {
+    if (items[index].kind === "file") {
+      const entry = item.webkitGetAsEntry();
+      showDropType(entry);
+      return entry;
+    }
+  });
+  const fileEntries = await excuteQueue(queue);
+  console.log("fileEntries :", fileEntries);
+  showListByEntries(fileEntries);
 }
 
 function dragOverHandler(event) {
   console.log("File(s) in drop zone");
   event.preventDefault();
+}
+
+async function excuteQueue(queue) {
+  const fileEntries = [];
+  while (queue.length > 0) {
+    let entry = queue.shift();
+    if (entry.isFile) {
+      fileEntries.push(entry);
+    } else if (entry.isDirectory) {
+      let reader = entry.createReader();
+      queue.push(...(await readAllDirectoryEntries(reader)));
+    }
+  }
+  return fileEntries;
+}
+
+// Get all the entries (files or sub-directories) in a directory
+// by calling readEntries until it returns empty array
+async function readAllDirectoryEntries(directoryReader) {
+  let entries = [];
+  let readEntries = await readEntriesPromise(directoryReader);
+  while (readEntries.length > 0) {
+    entries.push(...readEntries);
+    readEntries = await readEntriesPromise(directoryReader);
+  }
+  return entries;
+}
+
+async function readEntriesPromise(directoryReader) {
+  try {
+    return await new Promise((resolve, reject) => {
+      directoryReader.readEntries(resolve, reject);
+    });
+  } catch (err) {
+    console.log(err);
+  }
 }
 
 function showDropType(file) {
@@ -71,6 +96,16 @@ function showList(files) {
     const item = document.createElement("li");
     const hasPath = files[index].webkitRelativePath;
     item.innerText = hasPath ? files[index].webkitRelativePath : file.name;
+    output.appendChild(item);
+  });
+}
+
+function showListByEntries(fileEntries) {
+  const output = document.getElementById("listing");
+  output.innerHTML = "";
+  fileEntries.forEach(file => {
+    const item = document.createElement("li");
+    item.innerText = file.fullPath;
     output.appendChild(item);
   });
 }

@@ -1,3 +1,6 @@
+body {
+  padding: 1.5rem;
+}
 .textTitle {
   display: inline-block;
   min-width: 200px;
