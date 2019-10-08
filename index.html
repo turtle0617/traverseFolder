@@ -8,17 +8,12 @@
     <title>traverse Folder</title>
   </head>
   <body>
-    <div class="folder container">
-      <div class="title">
+    <div class="inputUpload container">
+      <div class="title folder">
         <h3>folder upload</h3>
         <input type="file" id="folderpicker" webkitdirectory multiple />
       </div>
-      <div id="folderDrop" class="dropArea">
-        <span>dropArea</span>
-      </div>
-    </div>
-    <div class="file container">
-      <div class="title">
+      <div class="title file">
         <h3>file upload</h3>
         <input
           type="file"
@@ -28,16 +23,15 @@
           multiple
         />
       </div>
-      <div id="fileDrop" class="dropArea">
-        <span>dropArea</span>
-      </div>
+    </div>
+    <div id="dropArea" class="dropArea">
+      <span>dropArea</span>
     </div>
     <ul id="listing"></ul>
     <script>
       const folderpicker = document.getElementById("folderpicker");
-      const folderDrop = document.getElementById("folderDrop");
       const filepicker = document.getElementById("filepicker");
-      const fileDrop = document.getElementById("fileDrop");
+      const dropArea = document.getElementById("dropArea");
 
       folderpicker.addEventListener(
         "change",
@@ -63,30 +57,31 @@
         false
       );
 
-      fileDrop.addEventListener("drop", dropHandler);
-      fileDrop.addEventListener("dragover", dragOverHandler);
+      dropArea.addEventListener("drop", dropHandler);
+      dropArea.addEventListener("dragover", dragOverHandler);
 
       function dropHandler(event) {
         event.preventDefault();
         const items = event.dataTransfer.items;
         const files = event.dataTransfer.files;
-        console.log('items :', items);
-        console.log('files :', files);
+        console.log("items :", items);
+        console.log("files :", files);
         if (event.dataTransfer.items) {
           // Use DataTransferItemList interface to access the file(s)
           [...event.dataTransfer.items].forEach((item, index) => {
             if (event.dataTransfer.items[index].kind === "file") {
               const entry = item.webkitGetAsEntry();
               const file = event.dataTransfer.items[index].getAsFile();
-              console.log('entry :', entry);
-              console.log("... file[" + index + "] = ",file);
+              console.log("entry :", entry);
+              console.log("... file[" + index + "] = ", file);
             }
           });
         } else {
           // Use DataTransfer interface to access the file(s)
           [...event.dataTransfer.items].forEach((item, index) => {
             console.log(
-              "... file[" + index + "] = ",ev.dataTransfer.files[index]
+              "... file[" + index + "] = ",
+              ev.dataTransfer.files[index]
             );
           });
         }
