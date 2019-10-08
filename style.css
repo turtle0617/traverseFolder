@@ -27,3 +27,11 @@
   font-size: 2.5rem;
   font-family: monospace;
 }
+
+#listing {
+  list-style-type: none
+}
+
+#listing li {
+  padding: 0.5rem 0;
+}
